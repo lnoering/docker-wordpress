@@ -1,0 +1,15 @@
+version: "3.6"
+
+services:
+  wordpress:
+    volumes: &wordpressvolumes
+      ## Some customs to developer here
+      - ./src:/var/www/html/wp-content  
+
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin
+  #   env_file: env/db.env
+  #   ports:
+  #     - "8080:80"
+  #   depends_on:
+  #     - db
