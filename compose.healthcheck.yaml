@@ -1,21 +1,22 @@
-version: "3.6"
+version: "3"
 
 services:
-  wordpress:
+
+  app:
     healthcheck:
       test: 'curl --fail 127.0.0.1:8000'
     depends_on:
+      phpfpm:
+        condition: service_started
+
+  phpfpm:
+    depends_on:
       db:
-        # condition: service_started
         condition: service_healthy
 
   db:
     healthcheck:
-      test: 'mysqladmin ping -h localhost -u root -pmypassword'
+      test: 'mysqladmin ping -h localhost -u root -prootpassword'
       interval: 5s
       timeout: 5s
       retries: 30
-
-  # mailcatcher:
-  #   healthcheck:
-  #     test: 'wget --no-verbose --tries=1 --spider 127.0.0.1:1080 || exit 1'

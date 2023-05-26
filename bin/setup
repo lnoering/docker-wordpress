@@ -1,0 +1,30 @@
+#!/bin/bash
+set -o errexit
+
+# shellcheck source=../env/db.env
+source env/db.env
+
+DOMAIN=${1:-wordpress.localhost}
+
+bin/stop
+
+bin/start --no-dev
+[ $? != 0 ] && echo "Failed to start Docker services" && exit
+
+bin/clinotty chmod u+x bin/magento
+rm -rf src && mkdir src
+
+echo "Copying files from container to host after install..."
+bin/copyfromcontainer --all
+
+echo "Setting basic URL and generating SSL certificate..."
+bin/setup-domain "${DOMAIN}"
+
+echo "Fixing owner and permissions..."
+bin/fixowns
+bin/fixperms
+
+cp -r .vscode src/
+
+echo "Docker development environment setup complete."
+echo "You may now access your WordPress instance at https://${DOMAIN}/"

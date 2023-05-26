@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ "$1" == "--no-dev" ]; then
+  bin/docker-compose --no-dev up -d --remove-orphans
+  exit $?
+fi
+
+bin/docker-compose up -d --build

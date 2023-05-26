@@ -1,35 +1,40 @@
 # Basic compose to run wordpress / woocomerce
 
-version: '3.6'
+version: "3"
 
 services:
+  app:
+    image: wordpress-nginx:1.24-0
+    build:
+      context: .
+      dockerfile: image/nginx.dockerfile
+    ports:
+      - 80:8000
+      - 443:8443
+    volumes: &appvolumes
+      - appdata:/var/www/html:delegated
+    depends_on:
+      - phpfpm
+      - db
+
   db:
-    image: mysql:5.7
-    platform: linux/amd64
+    platform: linux/x86_64 # mac os with m1 or change the image to mariadb
+    # image: mariadb:10.5.8
+    image: mysql:5.7.29
+    restart: always
+    ports:
+      - 3306:3306
+    env_file: env/db.env
     volumes:
       - dbdata:/var/lib/mysql
-    restart: always
-    env_file: env/db.env
-
-  wordpress:
-    image: wordpress:latest
-    depends_on:
-      - db
-    ports:
-      - 8080:80 # change to 80:80 when the shop is ready to go live
-    restart: always
-    env_file: env/wordpress.env
-    volumes: &wordpressvolumes
-      - ~/.composer:/var/www/.composer:cached
-      - ~/.ssh/id_rsa:/var/www/.ssh/id_rsa:cached
-      - ~/.ssh/known_hosts:/var/www/.ssh/known_hosts:cached
-      - wordpressdata:/var/www/html
-
-  # mailcatcher:
-  #   image: sj26/mailcatcher
-  #   ports:
-  #     - "1080:1080" 
+     
+  phpfpm:
+    image: wordpress-phpfpm:8.0-0
+    build:
+      context: .
+      dockerfile: image/php.dockerfile
+    volumes: *appvolumes
 
 volumes:
   dbdata:
-  wordpressdata:
+  appdata:

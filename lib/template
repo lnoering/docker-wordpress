@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+git init -qqq
+git remote add origin https://github.com/lnoering/docker-wordpress
+git fetch origin -qqq
+git checkout origin/master -- compose
+mv compose/* ./
+mv compose/.gitignore ./
+mv compose/.vscode ./
+rm -rf compose .git
+git init

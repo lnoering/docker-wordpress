@@ -1,2 +1,4 @@
 #!/bin/bash
-bin/n98-magerun2 db:dump --stdout "$@"
+source env/db.env
+
+bin/clinotty /usr/bin/mysqldump -host=${MYSQL_HOST} -user=${MYSQL_USER} -password${MYSQL_PASSWORD} ${MYSQL_DATABASE} > dbbackup.sql

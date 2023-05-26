@@ -1,15 +1,19 @@
-version: "3.6"
+# Basic compose to run wordpress / woocomerce
+
+version: "3"
 
 services:
-  wordpress:
-    volumes: &wordpressvolumes
-      ## Some customs to developer here
-      - ./src:/var/www/html/wp-content  
+  app:
+    volumes: &appvolumes
+      - ./src:/var/www/html:cached
 
-  # phpmyadmin:
-  #   image: phpmyadmin/phpmyadmin
-  #   env_file: env/db.env
-  #   ports:
-  #     - "8080:80"
-  #   depends_on:
-  #     - db
+  phpfpm:
+    volumes: *appvolumes
+
+  wp:
+    image: wordpress-phpfpm-wp:8.0-0
+    build:
+      context: .
+      dockerfile: image/wp-cli.dockerfile
+    entrypoint: ['wp', '--allow-root']
+    volumes: *appvolumes

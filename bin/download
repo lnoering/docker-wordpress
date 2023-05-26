@@ -1,0 +1,19 @@
+#!/bin/bash
+
+GH_VERSION=${1:-6.2.2}
+GH_USER=WordPress
+GH_REPO=WordPress
+
+bin/stop
+
+bin/start --no-dev
+[ $? != 0 ] && echo "Failed to start Docker services" && exit
+
+bin/clinotty wget https://github.com/${GH_USER}/${GH_REPO}/archive/refs/tags/${GH_VERSION}.tar.gz -O "${GH_REPO}-${GH_VERSION}.tar.gz"
+bin/clinotty tar -xzvf ./"${GH_REPO}-${GH_VERSION}.tar.gz" --strip-components=1
+bin/clinotty rm ./"${GH_REPO}-${GH_VERSION}.tar.gz"
+
+bin/fixperms
+bin/fixowns
+
+echo "-> Finished >> ${GH_USER}/${GH_REPO} - ${GH_VERSION}";
