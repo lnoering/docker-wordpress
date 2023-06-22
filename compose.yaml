@@ -12,7 +12,7 @@ services:
       - 80:8000
       - 443:8443
     volumes: &appvolumes
-      - appdata:/var/www/html:delegated
+      - appdata:/var/www/html  # :delegated
     depends_on:
       - phpfpm
       - db

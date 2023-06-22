@@ -6,6 +6,9 @@ services:
   app:
     volumes: &appvolumes
       - ./src:/var/www/html:cached
+  
+  db:
+    restart: on-failure
 
   phpfpm:
     volumes: *appvolumes
@@ -16,4 +19,11 @@ services:
       context: .
       dockerfile: image/wp-cli.dockerfile
     entrypoint: ['wp', '--allow-root']
+    volumes: *appvolumes
+
+  # sample with no container defined: 
+  # > docker run -v "$PWD":/usr/src/app -w /usr/src/app node:4 npm install
+  layout:
+    image: node:20-alpine
+    entrypoint: ['npm']
     volumes: *appvolumes
