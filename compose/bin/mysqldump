@@ -1,4 +1,4 @@
 #!/bin/bash
 source env/db.env
 
-bin/clinotty /usr/bin/mysqldump -host=${MYSQL_HOST} -user=${MYSQL_USER} -password${MYSQL_PASSWORD} ${MYSQL_DATABASE} > dbbackup.sql
+bin/dbclinotty /usr/bin/mysqldump -host=${MYSQL_HOST} -user=${MYSQL_USER} -password${MYSQL_PASSWORD} ${MYSQL_DATABASE} > dbbackup.sql
