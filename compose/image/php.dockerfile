@@ -12,4 +12,57 @@ RUN chown app:app /var/www/html
 
 WORKDIR /var/www/html
 
-RUN docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql
+RUN apk add --update --no-cache bzip2-dev zlib-dev libpng-dev gettext-dev gmp-dev openssl-dev icu-dev libxml2-dev libxslt-dev libzip-dev
+
+RUN docker-php-ext-install \
+    mysqli \
+    pdo \
+    pdo_mysql \
+    bz2 \
+    bcmath \
+    calendar \
+    dba \
+    exif \
+    gd \
+    gettext \
+    gmp \
+    intl \
+    pcntl \
+    shmop \
+    soap \
+    sockets \
+    sysvmsg \
+    sysvsem \
+    sysvshm \
+    xsl \
+    zip \
+    opcache
+
+RUN docker-php-ext-enable \
+    mysqli \
+    pdo \
+    pdo_mysql \
+    bz2 \
+    bcmath \
+    calendar \
+    dba \
+    exif \
+    gd \
+    gettext \
+    gmp \
+    intl \
+    pcntl \
+    shmop \
+    soap \
+    sockets \
+    sysvmsg \
+    sysvsem \
+    sysvshm \
+    xsl \
+    zip \
+    opcache
+
+
+ADD ./conf/php/custom-php.ini /usr/local/etc/php/conf.d/custom-php.ini
+
+RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini

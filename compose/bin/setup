@@ -4,18 +4,32 @@ set -o errexit
 # shellcheck source=../env/db.env
 source env/db.env
 
-DOMAIN=${1:-wordpress.localhost}
+DOMAIN=${1:-woo.localhost}
 
 bin/stop
 
 bin/start --no-dev
 [ $? != 0 ] && echo "Failed to start Docker services" && exit
 
-bin/clinotty chmod u+x bin/magento
-rm -rf src && mkdir src
+# rm -rf src && mkdir src
 
-echo "Copying files from container to host after install..."
-bin/copyfromcontainer --all
+# echo "Copying files from container to host after install..."
+# bin/copyfromcontainer --all
+
+# change site url
+OLDURL=$(bin/wp option get siteurl)
+OLDHOME=$(bin/wp option get home)
+NEWURL=https://${DOMAIN}
+
+# Bash script: Search/replace production to development url (multisite compatible)
+if $(bin/wp --url=${OLDURL} core is-installed --network); then
+    bin/wp search-replace --url=${OLDURL} \'${OLDURL}\' \'${NEWURL}\' --recurse-objects --network --skip-columns=guid --skip-tables=wp_users
+else
+    bin/wp search-replace  \'${OLDURL}\' \'${NEWURL}\' --recurse-objects --skip-columns=guid --skip-tables=wp_users
+fi
+
+# create admin user
+bin/wp user create adminlocal adminlocal@local.com --role=administrator --user_pass=adminlocal
 
 echo "Setting basic URL and generating SSL certificate..."
 bin/setup-domain "${DOMAIN}"
@@ -27,4 +41,4 @@ bin/fixperms
 cp -r .vscode src/
 
 echo "Docker development environment setup complete."
-echo "You may now access your WordPress instance at https://${DOMAIN}/"
+echo "You may now access your WP/Woo instance at https://${DOMAIN}/"
