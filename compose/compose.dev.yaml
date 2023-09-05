@@ -23,7 +23,23 @@ services:
 
   # sample with no container defined: 
   # > docker run -v "$PWD":/usr/src/app -w /usr/src/app node:4 npm install
+  # bin/layout install -g node@12.18.3 
+  # bin/layout install -g npm@9.8.0
+  # bin/layout npm run-script watch
+  # bin/layout i --prefix /var/www/html/wp-content/themes/chem-concepts
   layout:
-    image: node:20-alpine
-    entrypoint: ['npm']
+    # image: node:20-alpine
+    # image: node:12-alpine
+    # image: node:12.18.3-alpine
+    image: wordpress-node:12.18.3-0
+    build:
+      context: .
+      dockerfile: image/node.dockerfile
+    # platform: linux/amd64
+    ports:
+      - 3000:3000
+      - 3001:3001
+    working_dir: /var/www/html/wp-content/themes/chem-concepts
+    # entrypoint: ['npm']
     volumes: *appvolumes
+  

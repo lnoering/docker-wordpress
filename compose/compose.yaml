@@ -19,8 +19,8 @@ services:
 
   db:
     platform: linux/x86_64 # mac os with m1 or change the image to mariadb
-    # image: mariadb:10.5.8
-    image: mysql:5.7.29
+    image: mariadb:10.5.16
+    # image: mysql:5.7.29
     restart: always
     ports:
       - 3306:3306
@@ -34,6 +34,16 @@ services:
       context: .
       dockerfile: image/php.dockerfile
     volumes: *appvolumes
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - "6379:6379"
+
+  mailcatcher:
+    image: sj26/mailcatcher
+    ports:
+      - "1080:1080"
 
 volumes:
   dbdata:
